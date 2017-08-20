@@ -112,15 +112,19 @@ SOFTWARE.
 
 // Buttons (optional, for comfort)
 #define PIN_BUTTON_DOWN 4
+// TODO: Pin 5/6/7 will be used for switching
 #define PIN_BUTTON_SAVE 5
 
 #define PIN_LED 13
+// TODO: Pin 5/6/7 will be used for switching - no buzzer
 #define PIN_BUZZER 6 // Must be an active buzzer, not passive.
 
 #define PIN_SPI_DATA 10
 #define PIN_SPI_SLAVE_SELECT 11
 #define PIN_SPI_CLOCK 12
 
+// TODO: Add 4 more receivers, the LED pins will be ditched, switching via 3
+//       lines - 8 states
 #define PIN_RSSI_A A6
 #define PIN_LED_A A0
 #ifdef USE_DIVERSITY
@@ -128,6 +132,8 @@ SOFTWARE.
     #define PIN_RSSI_B A7
 #endif
 
+// TODO: Voltage monitorying will not be available since we do not hava analog
+//       pins left
 #ifdef USE_VOLTAGE_MONITORING
     #ifdef TVOUT_SCREENS
         #define PIN_VBAT A4
@@ -151,6 +157,7 @@ SOFTWARE.
 
 // === Voltage Monitoring ======================================================
 
+// TODO: See Above, voltage monitoring will not be available
 #ifdef USE_VOLTAGE_MONITORING
     // You can use any Arduino analog input to measure battery voltage. Keep in
     // mind that A4 and A5 is used by OLED and A6 and A7 are used for measuring

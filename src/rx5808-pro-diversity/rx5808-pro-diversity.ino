@@ -32,12 +32,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
+// TODO: settings.h
 #include "settings.h"
 #include "settings_internal.h"
+// TODO: settings_eeprom.h
 #include "settings_eeprom.h"
 
 #include "channels.h"
+// TODO: receiver.h
 #include "receiver.h"
 #include "receiver_spi.h"
 #include "buttons.h"
@@ -58,6 +60,7 @@ void setup()
 
     // Enable buzzer and LED for duration of setup process.
     digitalWrite(PIN_LED, HIGH);
+    // TODO: buzzer will not be available (wrap in ifdef)
     digitalWrite(PIN_BUZZER, LOW);
 
     setupSettings();
@@ -77,6 +80,7 @@ void setup()
 
     // Setup complete.
     digitalWrite(PIN_LED, LOW);
+    // TODO: buzzer will not be available (wrap in ifdef)
     digitalWrite(PIN_BUZZER, HIGH);
 
     Buttons::registerChangeFunc(globalMenuButtonHandler);
@@ -87,12 +91,15 @@ void setup()
 
 void setupPins() {
     pinMode(PIN_LED, OUTPUT);
+    // TODO: buzzer will not be available (wrap in ifdef)
     pinMode(PIN_BUZZER, OUTPUT);
     pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
     pinMode(PIN_BUTTON_MODE, INPUT_PULLUP);
     pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
+    // TODO: save button will not be available (wrap in ifdef)
     pinMode(PIN_BUTTON_SAVE, INPUT_PULLUP);
 
+    // TODO: save button will not be available (wrap in ifdef)
     pinMode(PIN_LED_A,OUTPUT);
     #ifdef USE_DIVERSITY
         pinMode(PIN_LED_B,OUTPUT);
@@ -100,6 +107,7 @@ void setupPins() {
 
     pinMode(PIN_RSSI_A, INPUT_PULLUP);
     #ifdef USE_DIVERSITY
+        // TODO: Add 4 more diversity channels
         pinMode(PIN_RSSI_B, INPUT_PULLUP);
     #endif
 

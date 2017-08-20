@@ -14,6 +14,7 @@ namespace Receiver {
     enum class ReceiverId : uint8_t {
         A
         #ifdef USE_DIVERSITY
+            // TODO: Add 4 more diversity receivers
             ,
             B
         #endif
@@ -22,6 +23,7 @@ namespace Receiver {
     #ifdef USE_DIVERSITY
         enum class DiversityMode : uint8_t {
             AUTO,
+            // TODO: Add 4 more diversity receivers
             FORCE_A,
             FORCE_B
         };
@@ -35,6 +37,7 @@ namespace Receiver {
     extern uint16_t rssiARaw;
     extern uint8_t rssiALast[RECEIVER_LAST_DATA_SIZE];
     #ifdef USE_DIVERSITY
+        // TODO: Add 4 more diversity receivers
         extern uint8_t rssiB;
         extern uint16_t rssiBRaw;
         extern uint8_t rssiBLast[RECEIVER_LAST_DATA_SIZE];
