@@ -72,6 +72,9 @@ SOFTWARE.
 
 #define USE_DIVERSITY
 
+// Enable 6x diversity
+//#define USE_6X_DIVERSITY
+
 // Enable this to switch receivers much faster. This uses the port registers
 // to switch rather than the Arduino helper functions.
 //
@@ -136,11 +139,32 @@ SOFTWARE.
 
 // TODO: Add 4 more receivers, the LED pins will be ditched, switching via 3
 //       lines - 8 states
-#define PIN_RSSI_A A6
-#define PIN_LED_A A0
+#define SWITCH_PINS 0b11100000
+#define PIN_SWITCH_0 7
+
+#define PIN_RSSI_A A0
+#define MASK_RECEIVER_A 0b10000000
 #ifdef USE_DIVERSITY
-    #define PIN_LED_B A1
-    #define PIN_RSSI_B A7
+    #define PIN_SWITCH_1 6
+
+    #define PIN_RSSI_B A1
+    #define MASK_RECEIVER_B 0b01000000
+
+    #ifdef  USE_6X_DIVERSITY
+        #define PIN_SWITCH_2 5
+
+        #define PIN_RSSI_C A2
+        #define MASK_RECEIVER_C 0b11000000
+
+        #define PIN_RSSI_D A3
+        #define MASK_RECEIVER_D 0b00100000
+
+        #define PIN_RSSI_E A6
+        #define MASK_RECEIVER_E 0b10100000
+
+        #define PIN_RSSI_F A7
+        #define MASK_RECEIVER_F 0b01100000
+    #endif
 #endif
 
 #ifdef USE_VOLTAGE_MONITORING

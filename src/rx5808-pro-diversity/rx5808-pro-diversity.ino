@@ -99,26 +99,34 @@ void setupPins() {
     pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
     pinMode(PIN_BUTTON_MODE, INPUT_PULLUP);
     pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
-    // TODO: save button will not be available (wrap in ifdef)
     #ifdef USE_SAVE_BUTTON
         pinMode(PIN_BUTTON_SAVE, INPUT_PULLUP);
     #endif
 
-    // TODO: save button will not be available (wrap in ifdef)
-    pinMode(PIN_LED_A,OUTPUT);
+    //pinMode(PIN_LED_A, OUTPUT);
+    pinMode(PIN_SWITCH_0, OUTPUT);
     #ifdef USE_DIVERSITY
-        pinMode(PIN_LED_B,OUTPUT);
+        //pinMode(PIN_LED_B, OUTPUT);
+        pinMode(PIN_SWITCH_1, OUTPUT);
+        #ifdef USE_6X_DIVERSITY
+          pinMode(PIN_SWITCH_2, OUTPUT);
+        #endif
     #endif
 
     pinMode(PIN_RSSI_A, INPUT_PULLUP);
     #ifdef USE_DIVERSITY
-        // TODO: Add 4 more diversity channels
         pinMode(PIN_RSSI_B, INPUT_PULLUP);
+        #ifdef USE_6X_DIVERSITY
+          pinMode(PIN_RSSI_C, INPUT_PULLUP);
+          pinMode(PIN_RSSI_D, INPUT_PULLUP);
+          pinMode(PIN_RSSI_E, INPUT_PULLUP);
+          pinMode(PIN_RSSI_F, INPUT_PULLUP);
+        #endif
     #endif
 
     pinMode(PIN_SPI_SLAVE_SELECT, OUTPUT);
     pinMode(PIN_SPI_DATA, OUTPUT);
-	pinMode(PIN_SPI_CLOCK, OUTPUT);
+    pinMode(PIN_SPI_CLOCK, OUTPUT);
 
     digitalWrite(PIN_SPI_SLAVE_SELECT, HIGH);
     digitalWrite(PIN_SPI_CLOCK, LOW);

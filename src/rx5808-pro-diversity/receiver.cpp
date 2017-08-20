@@ -47,27 +47,25 @@ namespace Receiver {
     void setActiveReceiver(ReceiverId receiver) {
         #ifdef USE_DIVERSITY
             #ifdef USE_DIVERSITY_FAST_SWITCHING
-                uint8_t targetPin, disablePin;
+                uint8_t mask, maskDisabled;
                 if (receiver == ReceiverId::A) {
-                    targetPin = PIN_LED_A;
-                    disablePin = PIN_LED_B;
+                    mask = MASK_RECEIVER_A;
+                    maskDisabled = MASK_RECEIVER_B;
                 } else {
-                    targetPin = PIN_LED_B;
-                    disablePin = PIN_LED_A;
+                    mask = MASK_RECEIVER_B;
+                    maskDisabled = MASK_RECEIVER_A;
                 }
 
-                uint8_t port = digitalPinToPort(targetPin);
-                uint8_t targetBit = digitalPinToBitMask(targetPin);
-                uint8_t disablebit = digitalPinToBitMask(disablePin);
+                uint8_t port = digitalPinToPort(PIN_SWITCH_0);
                 volatile uint8_t *out = portOutputRegister(port);
 
-                *out = (*out | targetBit) & ~disablebit;
+                *out = (*out | mask) & ~maskDisabled;
             #else
-                digitalWrite(PIN_LED_A, receiver == ReceiverId::A);
-                digitalWrite(PIN_LED_B, receiver == ReceiverId::B);
+                digitalWrite(PIN_SWITCH_0, receiver == ReceiverId::A);
+                digitalWrite(PIN_SWITCH_1, receiver == ReceiverId::B);
             #endif
         #else
-            digitalWrite(PIN_LED_A, HIGH);
+            digitalWrite(PIN_SWITCH_0, HIGH);
         #endif
 
         activeReceiver = receiver;
@@ -210,10 +208,13 @@ static void writeSerialData() {
         Serial.print(Receiver::rssiA, DEC);
         Serial.print(PSTR2("\t"));
         Serial.print(Receiver::rssiARaw, DEC);
-        Serial.print(PSTR2("\t"));
-        Serial.print(Receiver::rssiB, DEC);
-        Serial.print(PSTR2("\t"));
-        Serial.println(Receiver::rssiBRaw, DEC);
+
+        #ifdef USE_DIVERSITY
+            Serial.print(PSTR2("\t"));
+            Serial.print(Receiver::rssiB, DEC);
+            Serial.print(PSTR2("\t"));
+            Serial.println(Receiver::rssiBRaw, DEC);
+        #endif
 
         Receiver::serialLogTimer.reset();
     }
