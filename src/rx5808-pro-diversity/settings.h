@@ -123,8 +123,12 @@ SOFTWARE.
 //#define PIN_BUTTON_SAVE 14
 
 #define PIN_LED 13
-// TODO: Pin 5/6/7 will be used for switching - no buzzer
-#define PIN_BUZZER 6 // Must be an active buzzer, not passive.
+
+// NOTE: If using 6x diversity, there will not be a button left for the buzzer.
+//       Only use on Arduino MEGA platform, where you have more than 14 digital
+//       pins available.
+//#define USE_BUZZER
+//#define PIN_BUZZER 15 // Must be an active buzzer, not passive.
 
 #define PIN_SPI_DATA 10
 #define PIN_SPI_SLAVE_SELECT 11
@@ -162,7 +166,6 @@ SOFTWARE.
 
 // === Voltage Monitoring ======================================================
 
-// TODO: See Above, voltage monitoring will not be available
 #ifdef USE_VOLTAGE_MONITORING
     // You can use any Arduino analog input to measure battery voltage. Keep in
     // mind that A4 and A5 is used by OLED and A6 and A7 are used for measuring

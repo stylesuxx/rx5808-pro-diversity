@@ -60,8 +60,9 @@ void setup()
 
     // Enable buzzer and LED for duration of setup process.
     digitalWrite(PIN_LED, HIGH);
-    // TODO: buzzer will not be available (wrap in ifdef)
-    digitalWrite(PIN_BUZZER, LOW);
+    #ifdef USE_BUZZER
+        digitalWrite(PIN_BUZZER, LOW);
+    #endif
 
     setupSettings();
 
@@ -80,8 +81,9 @@ void setup()
 
     // Setup complete.
     digitalWrite(PIN_LED, LOW);
-    // TODO: buzzer will not be available (wrap in ifdef)
-    digitalWrite(PIN_BUZZER, HIGH);
+    #ifdef USE_BUZZER
+        digitalWrite(PIN_BUZZER, HIGH);
+    #endif
 
     Buttons::registerChangeFunc(globalMenuButtonHandler);
 
@@ -91,8 +93,9 @@ void setup()
 
 void setupPins() {
     pinMode(PIN_LED, OUTPUT);
-    // TODO: buzzer will not be available (wrap in ifdef)
-    pinMode(PIN_BUZZER, OUTPUT);
+    #ifdef USE_BUZZER
+        pinMode(PIN_BUZZER, OUTPUT);
+    #endif
     pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
     pinMode(PIN_BUTTON_MODE, INPUT_PULLUP);
     pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
