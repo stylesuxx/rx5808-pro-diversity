@@ -90,6 +90,9 @@ SOFTWARE.
 
 // You can use any of the arduino analog pins to measure the voltage of the
 // battery. See additional configuration below.
+//
+// NOTE: If using 6x diversity voltage monitoring will only be availabe on the
+//       Arduino MEGA series, where you have more than 6 analog inputs available
 //#define USE_VOLTAGE_MONITORING
 
 // Choose if you wish to use 8 additional channels:
@@ -112,8 +115,12 @@ SOFTWARE.
 
 // Buttons (optional, for comfort)
 #define PIN_BUTTON_DOWN 4
-// TODO: Pin 5/6/7 will be used for switching
-#define PIN_BUTTON_SAVE 5
+
+// NOTE: If using 6x diversity, there will not be a button left for saving.
+//       Only use on Arduino MEGA platform, where you have more than 14 digital
+//       pins available
+//#define USE_SAVE_BUTTON
+//#define PIN_BUTTON_SAVE 14
 
 #define PIN_LED 13
 // TODO: Pin 5/6/7 will be used for switching - no buzzer
@@ -132,13 +139,11 @@ SOFTWARE.
     #define PIN_RSSI_B A7
 #endif
 
-// TODO: Voltage monitorying will not be available since we do not hava analog
-//       pins left
 #ifdef USE_VOLTAGE_MONITORING
     #ifdef TVOUT_SCREENS
-        #define PIN_VBAT A4
+        #define PIN_VBAT A7
     #else
-        #define PIN_VBAT A2
+        #define PIN_VBAT A7
     #endif
 #endif
 

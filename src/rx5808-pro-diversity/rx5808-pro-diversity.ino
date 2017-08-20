@@ -97,7 +97,9 @@ void setupPins() {
     pinMode(PIN_BUTTON_MODE, INPUT_PULLUP);
     pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
     // TODO: save button will not be available (wrap in ifdef)
-    pinMode(PIN_BUTTON_SAVE, INPUT_PULLUP);
+    #ifdef USE_SAVE_BUTTON
+        pinMode(PIN_BUTTON_SAVE, INPUT_PULLUP);
+    #endif
 
     // TODO: save button will not be available (wrap in ifdef)
     pinMode(PIN_LED_A,OUTPUT);
