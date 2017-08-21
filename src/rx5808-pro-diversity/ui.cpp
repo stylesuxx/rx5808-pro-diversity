@@ -47,7 +47,7 @@ namespace Ui {
         #define CLAMP_DATAPOINT(p) \
             (p > dataScale) ? dataScale : ((p < 0) ? 0 : p);
 
-        Ui::clearRect(x, y, w - 1, h + 1);
+        Ui::clearRect(x, y, w, h + 1);
 
         const uint8_t xScaler = w / (dataSize - 1);
         const uint8_t xScalarMissing = w - (xScaler * (dataSize - 1));
@@ -64,8 +64,12 @@ namespace Ui {
             const uint8_t dataPointNextHeight =
                 h - SCALE_DATAPOINT(dataPointNext);
 
-            const uint8_t xEnd = xNext + xScaler
+            uint8_t xEnd = xNext + xScaler
                     + (i == 0 || i == dataSize - 2 ? (xScalarMissing + 1) / 2 : 0);
+
+            if(xEnd > (x + w - 1)) {
+                xEnd = (x + w - 1);
+            }
 
             Ui::display.drawLine(
                 xNext,

@@ -20,10 +20,29 @@ namespace Receiver {
     uint8_t rssiA = 0;
     uint16_t rssiARaw = 0;
     uint8_t rssiALast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+
     #ifdef USE_DIVERSITY
         uint8_t rssiB = 0;
         uint16_t rssiBRaw = 0;
         uint8_t rssiBLast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+
+        #ifdef USE_6X_DIVERSITY
+            uint8_t rssiC = 0;
+            uint16_t rssiCRaw = 0;
+            uint8_t rssiCLast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+
+            uint8_t rssiD = 0;
+            uint16_t rssiDRaw = 0;
+            uint8_t rssiDLast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+
+            uint8_t rssiE = 0;
+            uint16_t rssiERaw = 0;
+            uint8_t rssiELast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+
+            uint8_t rssiF = 0;
+            uint16_t rssiFRaw = 0;
+            uint8_t rssiFLast[RECEIVER_LAST_DATA_SIZE] = { 0 };
+        #endif
 
         ReceiverId diversityTargetReceiver = activeReceiver;
         Timer diversityHysteresisTimer = Timer(DIVERSITY_HYSTERESIS_PERIOD);
@@ -81,6 +100,20 @@ namespace Receiver {
         #ifdef USE_DIVERSITY
             analogRead(PIN_RSSI_B);
             rssiBRaw = analogRead(PIN_RSSI_B);
+
+            #ifdef USE_6X_DIVERSITY
+                analogRead(PIN_RSSI_C);
+                rssiCRaw = analogRead(PIN_RSSI_C);
+
+                analogRead(PIN_RSSI_D);
+                rssiDRaw = analogRead(PIN_RSSI_D);
+
+                analogRead(PIN_RSSI_E);
+                rssiERaw = analogRead(PIN_RSSI_E);
+
+                analogRead(PIN_RSSI_F);
+                rssiFRaw = analogRead(PIN_RSSI_F);
+            #endif
         #endif
 
         rssiA = constrain(
@@ -106,6 +139,55 @@ namespace Receiver {
                 0,
                 100
             );
+
+            #ifdef USE_6X_DIVERSITY
+                rssiC = constrain(
+                    map(
+                        rssiCRaw,
+                        EepromSettings.rssiCMin,
+                        EepromSettings.rssiCMax,
+                        0,
+                        100
+                    ),
+                    0,
+                    100
+                );
+
+                rssiD = constrain(
+                    map(
+                        rssiDRaw,
+                        EepromSettings.rssiDMin,
+                        EepromSettings.rssiDMax,
+                        0,
+                        100
+                    ),
+                    0,
+                    100
+                );
+                rssiE = constrain(
+                    map(
+                        rssiERaw,
+                        EepromSettings.rssiEMin,
+                        EepromSettings.rssiEMax,
+                        0,
+                        100
+                    ),
+                    0,
+                    100
+                );
+
+                rssiF = constrain(
+                    map(
+                        rssiFRaw,
+                        EepromSettings.rssiFMin,
+                        EepromSettings.rssiFMax,
+                        0,
+                        100
+                    ),
+                    0,
+                    100
+                );
+            #endif
         #endif
 
         if (rssiLogTimer.hasTicked()) {
@@ -113,12 +195,26 @@ namespace Receiver {
                 rssiALast[i] = rssiALast[i + 1];
                 #ifdef USE_DIVERSITY
                     rssiBLast[i] = rssiBLast[i + 1];
+
+                    #ifdef USE_6X_DIVERSITY
+                        rssiCLast[i] = rssiCLast[i + 1];
+                        rssiDLast[i] = rssiDLast[i + 1];
+                        rssiELast[i] = rssiELast[i + 1];
+                        rssiFLast[i] = rssiFLast[i + 1];
+                    #endif
                 #endif
             }
 
             rssiALast[RECEIVER_LAST_DATA_SIZE - 1] = rssiA;
             #ifdef USE_DIVERSITY
                 rssiBLast[RECEIVER_LAST_DATA_SIZE - 1] = rssiB;
+
+                #ifdef USE_6X_DIVERSITY
+                    rssiCLast[RECEIVER_LAST_DATA_SIZE - 1] = rssiC;
+                    rssiDLast[RECEIVER_LAST_DATA_SIZE - 1] = rssiD;
+                    rssiELast[RECEIVER_LAST_DATA_SIZE - 1] = rssiE;
+                    rssiFLast[RECEIVER_LAST_DATA_SIZE - 1] = rssiF;
+                #endif
             #endif
 
             rssiLogTimer.reset();
@@ -131,6 +227,7 @@ namespace Receiver {
         switchDiversity();
     }
 
+    // TODO: ADAPT for six receivers
     void switchDiversity() {
         ReceiverId nextReceiver = activeReceiver;
 
@@ -168,6 +265,24 @@ namespace Receiver {
                 case DiversityMode::FORCE_B:
                     nextReceiver = ReceiverId::B;
                     break;
+
+                #ifdef USE_6X_DIVERSITY
+                    case DiversityMode::FORCE_C:
+                        nextReceiver = ReceiverId::C;
+                        break;
+
+                    case DiversityMode::FORCE_D:
+                        nextReceiver = ReceiverId::D;
+                        break;
+
+                    case DiversityMode::FORCE_E:
+                        nextReceiver = ReceiverId::E;
+                        break;
+
+                    case DiversityMode::FORCE_F:
+                        nextReceiver = ReceiverId::F;
+                        break;
+                #endif
             }
         }
 
@@ -213,7 +328,29 @@ static void writeSerialData() {
             Serial.print(PSTR2("\t"));
             Serial.print(Receiver::rssiB, DEC);
             Serial.print(PSTR2("\t"));
-            Serial.println(Receiver::rssiBRaw, DEC);
+            Serial.print(Receiver::rssiBRaw, DEC);
+
+            #ifdef USE_6X_DIVERSITY
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiC, DEC);
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiCRaw, DEC);
+
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiD, DEC);
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiDRaw, DEC);
+
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiE, DEC);
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiERaw, DEC);
+
+                Serial.print(PSTR2("\t"));
+                Serial.print(Receiver::rssiF, DEC);
+                Serial.print(PSTR2("\t"));
+                Serial.println(Receiver::rssiFRaw, DEC);
+            #endif
         #endif
 
         Receiver::serialLogTimer.reset();

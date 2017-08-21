@@ -32,14 +32,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// TODO: settings.h
 #include "settings.h"
 #include "settings_internal.h"
-// TODO: settings_eeprom.h
 #include "settings_eeprom.h"
 
 #include "channels.h"
-// TODO: receiver.h
 #include "receiver.h"
 #include "receiver_spi.h"
 #include "buttons.h"
@@ -103,10 +100,8 @@ void setupPins() {
         pinMode(PIN_BUTTON_SAVE, INPUT_PULLUP);
     #endif
 
-    //pinMode(PIN_LED_A, OUTPUT);
     pinMode(PIN_SWITCH_0, OUTPUT);
     #ifdef USE_DIVERSITY
-        //pinMode(PIN_LED_B, OUTPUT);
         pinMode(PIN_SWITCH_1, OUTPUT);
         #ifdef USE_6X_DIVERSITY
           pinMode(PIN_SWITCH_2, OUTPUT);

@@ -33,17 +33,50 @@
 #define GRAPH_SEPERATOR_STEP 3
 
 #define GRAPH_X (BORDER_GRAPH_L_X + 2)
-#define GRAPH_W (SCREEN_WIDTH - BORDER_GRAPH_L_X)
-#ifdef USE_DIVERSITY
-    #define GRAPH_H (GRAPH_SEPERATOR_Y - 2)
-    #define GRAPH_A_Y 0
-    #define GRAPH_B_Y (SCREEN_HEIGHT - GRAPH_H - 1)
 
-    #define RX_TEXT_SIZE 1
-    #define RX_TEXT_X (BORDER_GRAPH_L_X + 4)
-    #define RX_TEXT_H (CHAR_HEIGHT * RX_TEXT_SIZE)
-    #define RX_TEXT_A_Y ((GRAPH_A_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
-    #define RX_TEXT_B_Y ((GRAPH_B_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+#ifndef USE_6X_DIVERSITY
+    #define GRAPH_W (SCREEN_WIDTH - BORDER_GRAPH_L_X)
+#endif
+
+#ifdef USE_DIVERSITY
+    #ifndef USE_6X_DIVERSITY
+        #define GRAPH_H (GRAPH_SEPERATOR_Y - 2)
+        #define GRAPH_A_Y 0
+        #define GRAPH_B_Y (SCREEN_HEIGHT - GRAPH_H - 1)
+
+        #define RX_TEXT_SIZE 1
+        #define RX_TEXT_X (BORDER_GRAPH_L_X + 4)
+        #define RX_TEXT_H (CHAR_HEIGHT * RX_TEXT_SIZE)
+        #define RX_TEXT_A_Y ((GRAPH_A_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_B_Y ((GRAPH_B_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+    #endif
+
+    #ifdef USE_6X_DIVERSITY
+        #define GRAPH_W (SCREEN_WIDTH - BORDER_GRAPH_L_X) / 2 - 1 - 1
+        #define GRAPH_H 18
+        #define GRAPH_X1 (BORDER_GRAPH_L_X + GRAPH_W + 2 + 2 + 1)
+
+        #define GRAPH_A_Y (GRAPH_H * 2) + 8
+        #define GRAPH_B_Y (GRAPH_H * 2) + 8
+
+        #define GRAPH_C_Y (GRAPH_H) + 4
+        #define GRAPH_D_Y (GRAPH_H) + 4
+
+        #define GRAPH_E_Y 0
+        #define GRAPH_F_Y 0
+
+        #define RX_TEXT_SIZE 1
+        #define RX_TEXT_X (BORDER_GRAPH_L_X + 4)
+        #define RX_TEXT_X1 (BORDER_GRAPH_L_X + GRAPH_W + 7)
+
+        #define RX_TEXT_H (CHAR_HEIGHT * RX_TEXT_SIZE)
+        #define RX_TEXT_A_Y ((GRAPH_A_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_B_Y ((GRAPH_B_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_C_Y ((GRAPH_C_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_D_Y ((GRAPH_D_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_E_Y ((GRAPH_E_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+        #define RX_TEXT_F_Y ((GRAPH_F_Y + GRAPH_H / 2) - (RX_TEXT_H / 2))
+    #endif
 #else
     #define GRAPH_H (SCREEN_HEIGHT - 1)
     #define GRAPH_Y 0
@@ -114,6 +147,15 @@ void StateMachine::SearchStateHandler::drawBorders() {
         SCREEN_HEIGHT,
         GRAPH_SEPERATOR_STEP
     );
+
+    #ifdef USE_6X_DIVERSITY
+        Ui::drawDashedVLine(
+            GRAPH_X1 - 2,
+            0,
+            SCREEN_HEIGHT,
+            GRAPH_SEPERATOR_STEP
+        );
+    #endif
 }
 
 void StateMachine::SearchStateHandler::drawChannelText() {
@@ -145,42 +187,142 @@ void StateMachine::SearchStateHandler::drawScanBar() {
 }
 
 void StateMachine::SearchStateHandler::drawRssiGraph() {
+    // TODO: Draw other graphs
     #ifdef USE_DIVERSITY
-        Ui::drawGraph(
-            Receiver::rssiBLast,
-            RECEIVER_LAST_DATA_SIZE,
-            100,
-            GRAPH_X,
-            GRAPH_A_Y,
-            GRAPH_W,
-            GRAPH_H
-        );
+        #ifndef USE_6X_DIVERSITY
+            Ui::drawGraph(
+                Receiver::rssiBLast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X,
+                GRAPH_A_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
 
-        Ui::drawGraph(
-            Receiver::rssiALast,
-            RECEIVER_LAST_DATA_SIZE,
-            100,
-            GRAPH_X,
-            GRAPH_B_Y,
-            GRAPH_W,
-            GRAPH_H
-        );
+            Ui::drawGraph(
+                Receiver::rssiALast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X,
+                GRAPH_B_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
 
-        Ui::drawDashedHLine(
-            GRAPH_X,
-            GRAPH_SEPERATOR_Y,
-            GRAPH_SEPERATOR_W,
-            GRAPH_SEPERATOR_STEP
-        );
+            Ui::drawDashedHLine(
+                GRAPH_X,
+                GRAPH_SEPERATOR_Y,
+                GRAPH_SEPERATOR_W,
+                GRAPH_SEPERATOR_STEP
+            );
 
-        display.setTextSize(RX_TEXT_SIZE);
-        display.setTextColor(INVERSE);
+            display.setTextSize(RX_TEXT_SIZE);
+            display.setTextColor(INVERSE);
 
-        display.setCursor(RX_TEXT_X, RX_TEXT_A_Y);
-        display.print(PSTR2("B"));
+            display.setCursor(RX_TEXT_X, RX_TEXT_A_Y);
+            display.print(PSTR2("B"));
 
-        display.setCursor(RX_TEXT_X, RX_TEXT_B_Y);
-        display.print(PSTR2("A"));
+            display.setCursor(RX_TEXT_X, RX_TEXT_B_Y);
+            display.print(PSTR2("A"));
+        #endif
+
+        #ifdef USE_6X_DIVERSITY
+            Ui::drawGraph(
+                Receiver::rssiALast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X,
+                GRAPH_A_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawGraph(
+                Receiver::rssiCLast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X,
+                GRAPH_C_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawGraph(
+                Receiver::rssiELast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X,
+                GRAPH_E_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawGraph(
+                Receiver::rssiBLast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X1,
+                GRAPH_B_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawGraph(
+                Receiver::rssiDLast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X1,
+                GRAPH_D_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawGraph(
+                Receiver::rssiFLast,
+                RECEIVER_LAST_DATA_SIZE,
+                100,
+                GRAPH_X1,
+                GRAPH_F_Y,
+                GRAPH_W,
+                GRAPH_H
+            );
+
+            Ui::drawDashedHLine(
+                GRAPH_X,
+                GRAPH_C_Y - 2,
+                GRAPH_SEPERATOR_W,
+                GRAPH_SEPERATOR_STEP
+            );
+
+            Ui::drawDashedHLine(
+                GRAPH_X,
+                GRAPH_A_Y - 2,
+                GRAPH_SEPERATOR_W,
+                GRAPH_SEPERATOR_STEP
+            );
+
+            display.setTextSize(RX_TEXT_SIZE);
+            display.setTextColor(INVERSE);
+
+            display.setCursor(RX_TEXT_X, RX_TEXT_A_Y);
+            display.print(PSTR2("A"));
+
+            display.setCursor(RX_TEXT_X, RX_TEXT_C_Y);
+            display.print(PSTR2("C"));
+
+            display.setCursor(RX_TEXT_X, RX_TEXT_E_Y);
+            display.print(PSTR2("E"));
+
+            display.setCursor(RX_TEXT_X1, RX_TEXT_B_Y);
+            display.print(PSTR2("B"));
+
+            display.setCursor(RX_TEXT_X1, RX_TEXT_D_Y);
+            display.print(PSTR2("D"));
+
+            display.setCursor(RX_TEXT_X1, RX_TEXT_F_Y);
+            display.print(PSTR2("F"));
+        #endif
     #else
         Ui::drawGraph(
             Receiver::rssiALast,

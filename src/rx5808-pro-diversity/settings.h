@@ -73,7 +73,7 @@ SOFTWARE.
 #define USE_DIVERSITY
 
 // Enable 6x diversity
-//#define USE_6X_DIVERSITY
+#define USE_6X_DIVERSITY
 
 // Enable this to switch receivers much faster. This uses the port registers
 // to switch rather than the Arduino helper functions.

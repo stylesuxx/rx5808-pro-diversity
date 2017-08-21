@@ -7,25 +7,38 @@
 
 
 #define RECEIVER_LAST_DELAY 50
-#define RECEIVER_LAST_DATA_SIZE 24
+#define RECEIVER_LAST_DATA_SIZE 4
 
 
 namespace Receiver {
     enum class ReceiverId : uint8_t {
         A
         #ifdef USE_DIVERSITY
-            // TODO: Add 4 more diversity receivers
             ,
             B
+            #ifdef USE_6X_DIVERSITY
+                ,
+                C,
+                D,
+                E,
+                F
+            #endif
         #endif
     };
 
     #ifdef USE_DIVERSITY
         enum class DiversityMode : uint8_t {
             AUTO,
-            // TODO: Add 4 more diversity receivers
             FORCE_A,
             FORCE_B
+
+            #ifdef USE_6X_DIVERSITY
+                ,
+                FORCE_C,
+                FORCE_D,
+                FORCE_E,
+                FORCE_F
+            #endif
         };
     #endif
 
@@ -36,11 +49,29 @@ namespace Receiver {
     extern uint8_t rssiA;
     extern uint16_t rssiARaw;
     extern uint8_t rssiALast[RECEIVER_LAST_DATA_SIZE];
+
     #ifdef USE_DIVERSITY
-        // TODO: Add 4 more diversity receivers
         extern uint8_t rssiB;
         extern uint16_t rssiBRaw;
         extern uint8_t rssiBLast[RECEIVER_LAST_DATA_SIZE];
+
+        #ifdef USE_6X_DIVERSITY
+            extern uint8_t rssiC;
+            extern uint16_t rssiCRaw;
+            extern uint8_t rssiCLast[RECEIVER_LAST_DATA_SIZE];
+
+            extern uint8_t rssiD;
+            extern uint16_t rssiDRaw;
+            extern uint8_t rssiDLast[RECEIVER_LAST_DATA_SIZE];
+
+            extern uint8_t rssiE;
+            extern uint16_t rssiERaw;
+            extern uint8_t rssiELast[RECEIVER_LAST_DATA_SIZE];
+
+            extern uint8_t rssiF;
+            extern uint16_t rssiFRaw;
+            extern uint8_t rssiFLast[RECEIVER_LAST_DATA_SIZE];
+        #endif
     #endif
 
     void setChannel(uint8_t channel);

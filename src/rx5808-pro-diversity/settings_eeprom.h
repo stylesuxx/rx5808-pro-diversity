@@ -23,10 +23,23 @@ struct EepromSettings {
     uint16_t rssiAMax;
 
     #ifdef USE_DIVERSITY
-        // TODO: Add 4 more channels
         Receiver::DiversityMode diversityMode;
         uint16_t rssiBMin;
         uint16_t rssiBMax;
+
+        #ifdef USE_6X_DIVERSITY
+            uint16_t rssiCMin;
+            uint16_t rssiCMax;
+
+            uint16_t rssiDMin;
+            uint16_t rssiDMax;
+
+            uint16_t rssiEMin;
+            uint16_t rssiEMax;
+
+            uint16_t rssiFMin;
+            uint16_t rssiFMax;
+        #endif
     #endif
 
     #ifdef USE_VOLTAGE_MONITORING
@@ -59,10 +72,23 @@ PROGMEM const struct {
     uint16_t rssiAMax = RSSI_MAX_VAL;
 
     #ifdef USE_DIVERSITY
-        // TODO: add 4 more channels
         Receiver::DiversityMode diversityMode = Receiver::DiversityMode::AUTO;
         uint16_t rssiBMin = RSSI_MIN_VAL;
         uint16_t rssiBMax = RSSI_MAX_VAL;
+
+        #ifdef USE_6X_DIVERSITY
+            uint16_t rssiCMin = RSSI_MIN_VAL;
+            uint16_t rssiCMax = RSSI_MAX_VAL;
+
+            uint16_t rssiDMin = RSSI_MIN_VAL;
+            uint16_t rssiDMax = RSSI_MAX_VAL;
+
+            uint16_t rssiEMin = RSSI_MIN_VAL;
+            uint16_t rssiEMax = RSSI_MAX_VAL;
+
+            uint16_t rssiFMin = RSSI_MIN_VAL;
+            uint16_t rssiFMax = RSSI_MAX_VAL;
+        #endif
     #endif
 
     #ifdef USE_VOLTAGE_MONITORING
