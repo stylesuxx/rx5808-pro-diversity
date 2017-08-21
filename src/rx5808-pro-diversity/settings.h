@@ -139,31 +139,31 @@ SOFTWARE.
 
 // TODO: Add 4 more receivers, the LED pins will be ditched, switching via 3
 //       lines - 8 states
-#define SWITCH_PINS 0b11100000
+#define SWITCH_PINS 0b11111100
 #define PIN_SWITCH_0 7
 
 #define PIN_RSSI_A A0
-#define MASK_RECEIVER_A 0b10000000
+#define MASK_RECEIVER_A 0b10011100
 #ifdef USE_DIVERSITY
     #define PIN_SWITCH_1 6
 
     #define PIN_RSSI_B A1
-    #define MASK_RECEIVER_B 0b01000000
+    #define MASK_RECEIVER_B 0b01011100
 
     #ifdef  USE_6X_DIVERSITY
         #define PIN_SWITCH_2 5
 
         #define PIN_RSSI_C A2
-        #define MASK_RECEIVER_C 0b11000000
+        #define MASK_RECEIVER_C 0b11011100
 
         #define PIN_RSSI_D A3
-        #define MASK_RECEIVER_D 0b00100000
+        #define MASK_RECEIVER_D 0b00111100
 
         #define PIN_RSSI_E A6
-        #define MASK_RECEIVER_E 0b10100000
+        #define MASK_RECEIVER_E 0b10111100
 
         #define PIN_RSSI_F A7
-        #define MASK_RECEIVER_F 0b01100000
+        #define MASK_RECEIVER_F 0b01111100
     #endif
 #endif
 
@@ -244,7 +244,7 @@ SOFTWARE.
 // Shorter values will make it more reactive, but may lead to double trigger.
 #define BUTTON_DEBOUNCE_DELAY 100
 
-#define SCREENSAVER_TIMEOUT 30 // Seconds to wait before entering screensaver
+#define SCREENSAVER_TIMEOUT 120 // Seconds to wait before entering screensaver
 #define SCREENSAVER_DISPLAY_CYCLE 3 // Seconds between switching logo/channel
 
 // Time needed to hold mode to get to menu

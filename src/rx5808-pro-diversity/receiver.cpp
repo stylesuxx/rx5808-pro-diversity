@@ -65,23 +65,59 @@ namespace Receiver {
 
     void setActiveReceiver(ReceiverId receiver) {
         #ifdef USE_DIVERSITY
-            #ifdef USE_DIVERSITY_FAST_SWITCHING
-                uint8_t mask, maskDisabled;
-                if (receiver == ReceiverId::A) {
-                    mask = MASK_RECEIVER_A;
-                    maskDisabled = MASK_RECEIVER_B;
-                } else {
-                    mask = MASK_RECEIVER_B;
-                    maskDisabled = MASK_RECEIVER_A;
+            #ifndef USE_6X_DIVERSITY
+                #ifdef USE_DIVERSITY_FAST_SWITCHING
+                    uint8_t mask, maskDisabled;
+                    if (receiver == ReceiverId::A) {
+                        mask = MASK_RECEIVER_A;
+                        maskDisabled = MASK_RECEIVER_B;
+                    } else {
+                        mask = MASK_RECEIVER_B;
+                        maskDisabled = MASK_RECEIVER_A;
+                    }
+
+                    uint8_t port = digitalPinToPort(PIN_SWITCH_0);
+                    volatile uint8_t *out = portOutputRegister(port);
+
+                    *out = mask;
+                #else
+                    digitalWrite(PIN_SWITCH_0, receiver == ReceiverId::A);
+                    digitalWrite(PIN_SWITCH_1, receiver == ReceiverId::B);
+                #endif
+            #endif
+
+            #ifdef USE_6X_DIVERSITY
+                uint8_t mask;
+                switch(receiver) {
+                    case ReceiverId::F: {
+                        mask = MASK_RECEIVER_F;
+                    } break;
+
+                    case ReceiverId::E: {
+                        mask = MASK_RECEIVER_E;
+                    } break;
+
+                    case ReceiverId::D: {
+                        mask = MASK_RECEIVER_D;
+                    } break;
+
+                    case ReceiverId::C: {
+                        mask = MASK_RECEIVER_C;
+                    } break;
+
+                    case ReceiverId::B: {
+                        mask = MASK_RECEIVER_B;
+                    } break;
+
+                    case ReceiverId::A:
+                    default: {
+                        mask = MASK_RECEIVER_A;
+                    } break;
                 }
 
                 uint8_t port = digitalPinToPort(PIN_SWITCH_0);
                 volatile uint8_t *out = portOutputRegister(port);
-
-                *out = (*out | mask) & ~maskDisabled;
-            #else
-                digitalWrite(PIN_SWITCH_0, receiver == ReceiverId::A);
-                digitalWrite(PIN_SWITCH_1, receiver == ReceiverId::B);
+                *out = mask;
             #endif
         #else
             digitalWrite(PIN_SWITCH_0, HIGH);
@@ -232,30 +268,257 @@ namespace Receiver {
         ReceiverId nextReceiver = activeReceiver;
 
         if (EepromSettings.diversityMode == DiversityMode::AUTO) {
-            int8_t rssiDiff = (int8_t) rssiA - (int8_t) rssiB;
-            uint8_t rssiDiffAbs = abs(rssiDiff);
-            ReceiverId currentBestReceiver = activeReceiver;
+            #ifndef USE_6X_DIVERSITY
+                int8_t rssiDiff = (int8_t) rssiA - (int8_t) rssiB;
+                uint8_t rssiDiffAbs = abs(rssiDiff);
+                ReceiverId currentBestReceiver = activeReceiver;
 
-            if (rssiDiff > 0) {
-                currentBestReceiver = ReceiverId::A;
-            } else if (rssiDiff < 0) {
-                currentBestReceiver = ReceiverId::B;
-            } else {
-                currentBestReceiver = activeReceiver;
-            }
+                if (rssiDiff > 0) {
+                    currentBestReceiver = ReceiverId::A;
+                } else if (rssiDiff < 0) {
+                    currentBestReceiver = ReceiverId::B;
+                } else {
+                    currentBestReceiver = activeReceiver;
+                }
 
-            if (rssiDiffAbs >= DIVERSITY_HYSTERESIS) {
-                if (currentBestReceiver == diversityTargetReceiver) {
-                    if (diversityHysteresisTimer.hasTicked()) {
-                        nextReceiver = diversityTargetReceiver;
+                if (rssiDiffAbs >= DIVERSITY_HYSTERESIS) {
+                    if (currentBestReceiver == diversityTargetReceiver) {
+                        if (diversityHysteresisTimer.hasTicked()) {
+                            nextReceiver = diversityTargetReceiver;
+                        }
+                    } else {
+                        diversityTargetReceiver = currentBestReceiver;
+                        diversityHysteresisTimer.reset();
                     }
                 } else {
-                    diversityTargetReceiver = currentBestReceiver;
                     diversityHysteresisTimer.reset();
                 }
-            } else {
-                diversityHysteresisTimer.reset();
-            }
+            #endif
+
+            #ifdef USE_6X_DIVERSITY
+                int8_t rssiDiff, rssiDiffAbs, best;
+                ReceiverId currentBestReceiver = activeReceiver;
+
+                switch(currentBestReceiver) {
+                    case ReceiverId::A: {
+                        best = rssiA;
+
+                        rssiDiff = (int8_t) rssiB - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::B;
+                            best = rssiB;
+                        }
+
+                        rssiDiff = (int8_t) rssiC - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::C;
+                            best = rssiC;
+                        }
+
+                        rssiDiff = (int8_t) rssiD - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::D;
+                            best = rssiD;
+                        }
+
+                        rssiDiff = (int8_t) rssiE - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::E;
+                            best = rssiE;
+                        }
+
+                        rssiDiff = (int8_t) rssiF - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::F;
+                            best = rssiF;
+                        }
+                    } break;
+                    case ReceiverId::B: {
+                        best = rssiB;
+
+                        rssiDiff = (int8_t) rssiA - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::A;
+                            best = rssiA;
+                        }
+
+                        rssiDiff = (int8_t) rssiC - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::C;
+                            best = rssiC;
+                        }
+
+                        rssiDiff = (int8_t) rssiD - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::D;
+                            best = rssiD;
+                        }
+
+                        rssiDiff = (int8_t) rssiE - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::E;
+                            best = rssiE;
+                        }
+
+                        rssiDiff = (int8_t) rssiF - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::F;
+                            best = rssiF;
+                        }
+                    } break;
+
+                    case ReceiverId::C: {
+                        best = rssiC;
+
+                        rssiDiff = (int8_t) rssiA - rssiC;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::A;
+                            best = rssiA;
+                        }
+
+                        rssiDiff = (int8_t) rssiB - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::B;
+                            best = rssiB;
+                        }
+
+                        rssiDiff = (int8_t) rssiD - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::D;
+                            best = rssiD;
+                        }
+
+                        rssiDiff = (int8_t) rssiE - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::E;
+                            best = rssiE;
+                        }
+
+                        rssiDiff = (int8_t) rssiF - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::F;
+                            best = rssiF;
+                        }
+                    } break;
+
+                    case ReceiverId::D: {
+                        best = rssiD;
+
+                        rssiDiff = (int8_t) rssiA - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::A;
+                            best = rssiA;
+                        }
+
+                        rssiDiff = (int8_t) rssiB - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::B;
+                            best = rssiB;
+                        }
+
+                        rssiDiff = (int8_t) rssiC - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::C;
+                            best = rssiC;
+                        }
+
+                        rssiDiff = (int8_t) rssiE - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::E;
+                            best = rssiE;
+                        }
+
+                        rssiDiff = (int8_t) rssiF - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::F;
+                            best = rssiF;
+                        }
+                    } break;
+
+                    case ReceiverId::E: {
+                        best = rssiE;
+
+                        rssiDiff = (int8_t) rssiA - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::A;
+                            best = rssiA;
+                        }
+
+                        rssiDiff = (int8_t) rssiB - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::B;
+                            best = rssiB;
+                        }
+
+                        rssiDiff = (int8_t) rssiC - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::C;
+                            best = rssiC;
+                        }
+
+                        rssiDiff = (int8_t) rssiD - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::D;
+                            best = rssiD;
+                        }
+
+                        rssiDiff = (int8_t) rssiF - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::F;
+                            best = rssiF;
+                        }
+                    } break;
+
+                    case ReceiverId::F:
+                    default: {
+                        best = rssiF;
+
+                        rssiDiff = (int8_t) rssiA - rssiF;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::A;
+                            best = rssiA;
+                        }
+
+                        rssiDiff = (int8_t) rssiB - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::B;
+                            best = rssiB;
+                        }
+
+                        rssiDiff = (int8_t) rssiC - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::C;
+                            best = rssiC;
+                        }
+
+                        rssiDiff = (int8_t) rssiD - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::D;
+                            best = rssiD;
+                        }
+
+                        rssiDiff = (int8_t) rssiE - best;
+                        if(rssiDiff > 0) {
+                            currentBestReceiver = ReceiverId::E;
+                            best = rssiE;
+                        }
+                    } break;
+                }
+
+                rssiDiffAbs = abs(rssiDiff);
+                if (rssiDiffAbs >= DIVERSITY_HYSTERESIS) {
+                    if (currentBestReceiver == diversityTargetReceiver) {
+                        if (diversityHysteresisTimer.hasTicked()) {
+                            nextReceiver = diversityTargetReceiver;
+                        }
+                    } else {
+                        diversityTargetReceiver = currentBestReceiver;
+                        diversityHysteresisTimer.reset();
+                    }
+                } else {
+                    diversityHysteresisTimer.reset();
+                }
+            #endif
         } else {
             switch (EepromSettings.diversityMode) {
                 case DiversityMode::FORCE_A:

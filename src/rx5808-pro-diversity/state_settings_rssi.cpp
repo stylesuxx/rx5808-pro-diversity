@@ -30,6 +30,20 @@ void StateMachine::SettingsRssiStateHandler::onUpdate() {
             #ifdef USE_DIVERSITY
                 if (Receiver::rssiBRaw < EepromSettings.rssiBMin)
                     EepromSettings.rssiBMin = Receiver::rssiBRaw;
+
+                #ifdef USE_6X_DIVERSITY
+                    if (Receiver::rssiCRaw < EepromSettings.rssiCMin)
+                        EepromSettings.rssiCMin = Receiver::rssiCRaw;
+
+                    if (Receiver::rssiDRaw < EepromSettings.rssiDMin)
+                        EepromSettings.rssiDMin = Receiver::rssiDRaw;
+
+                    if (Receiver::rssiERaw < EepromSettings.rssiEMin)
+                        EepromSettings.rssiEMin = Receiver::rssiERaw;
+
+                    if (Receiver::rssiFRaw < EepromSettings.rssiFMin)
+                        EepromSettings.rssiFMin = Receiver::rssiFRaw;
+                #endif
             #endif
         break;
 
@@ -40,6 +54,20 @@ void StateMachine::SettingsRssiStateHandler::onUpdate() {
             #ifdef USE_DIVERSITY
                 if (Receiver::rssiBRaw > EepromSettings.rssiBMax)
                     EepromSettings.rssiBMax = Receiver::rssiBRaw;
+
+                #ifdef USE_6X_DIVERSITY
+                    if (Receiver::rssiCRaw > EepromSettings.rssiCMax)
+                        EepromSettings.rssiCMax = Receiver::rssiCRaw;
+
+                    if (Receiver::rssiDRaw > EepromSettings.rssiDMax)
+                        EepromSettings.rssiDMax = Receiver::rssiDRaw;
+
+                    if (Receiver::rssiERaw > EepromSettings.rssiEMax)
+                        EepromSettings.rssiEMax = Receiver::rssiERaw;
+
+                    if (Receiver::rssiFRaw > EepromSettings.rssiFMax)
+                        EepromSettings.rssiFMax = Receiver::rssiFRaw;
+                #endif
             #endif
         break;
     }
@@ -80,6 +108,12 @@ void StateMachine::SettingsRssiStateHandler::onButtonChange(
             EepromSettings.rssiAMin = UINT16_MAX;
             #ifdef USE_DIVERSITY
                 EepromSettings.rssiBMin = UINT16_MAX;
+                    #ifdef USE_6X_DIVERSITY
+                        EepromSettings.rssiCMin = UINT16_MAX;
+                        EepromSettings.rssiDMin = UINT16_MAX;
+                        EepromSettings.rssiEMin = UINT16_MAX;
+                        EepromSettings.rssiFMin = UINT16_MAX;
+                    #endif
             #endif
         break;
 
@@ -91,6 +125,12 @@ void StateMachine::SettingsRssiStateHandler::onButtonChange(
             EepromSettings.rssiAMax = 0;
             #ifdef USE_DIVERSITY
                 EepromSettings.rssiBMax = 0;
+                #ifdef USE_6X_DIVERSITY
+                    EepromSettings.rssiCMax = 0;
+                    EepromSettings.rssiDMax = 0;
+                    EepromSettings.rssiEMax = 0;
+                    EepromSettings.rssiFMax = 0;
+                #endif
             #endif
         break;
 
@@ -155,8 +195,29 @@ void StateMachine::SettingsRssiStateHandler::onUpdateDraw() {
             Ui::display.setCursor((CHAR_WIDTH + 1) * 5, CHAR_HEIGHT * 2);
             Ui::display.print(EepromSettings.rssiAMin);
             #ifdef USE_DIVERSITY
-                Ui::display.setCursor((CHAR_WIDTH + 1) * 12, CHAR_HEIGHT * 2);
-                Ui::display.print(EepromSettings.rssiAMin);
+                Ui::display.setCursor((CHAR_WIDTH + 1) * 10, CHAR_HEIGHT * 2);
+                Ui::display.print(EepromSettings.rssiBMin);
+
+                #ifdef USE_6X_DIVERSITY
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 15,
+                        CHAR_HEIGHT * 2);
+                    Ui::display.print(EepromSettings.rssiCMin);
+
+                    Ui::display.setCursor(0, CHAR_HEIGHT * 4 + 6);
+                    Ui::display.print(PSTR2("Min: "));
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 5,
+                        CHAR_HEIGHT * 4 + 6);
+                    Ui::display.print(EepromSettings.rssiDMin);
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 10,
+                        CHAR_HEIGHT * 4 + 6);
+                    Ui::display.print(EepromSettings.rssiEMin);
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 15,
+                        CHAR_HEIGHT * 4 + 6);
+                    Ui::display.print(EepromSettings.rssiFMin);
+                #endif
             #endif
 
             Ui::display.setCursor(0, CHAR_HEIGHT * 3 + 1);
@@ -165,9 +226,30 @@ void StateMachine::SettingsRssiStateHandler::onUpdateDraw() {
             Ui::display.setCursor((CHAR_WIDTH + 1) * 5, CHAR_HEIGHT * 3 + 1);
             Ui::display.print(EepromSettings.rssiAMax);
             #ifdef USE_DIVERSITY
-                Ui::display.setCursor((CHAR_WIDTH + 1) * 12,
+                Ui::display.setCursor((CHAR_WIDTH + 1) * 10,
                     CHAR_HEIGHT * 3 + 1);
                 Ui::display.print(EepromSettings.rssiBMax);
+
+                #ifdef USE_6X_DIVERSITY
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 15,
+                        CHAR_HEIGHT * 3 + 1);
+                    Ui::display.print(EepromSettings.rssiCMax);
+
+                    Ui::display.setCursor(0, CHAR_HEIGHT * 5 + 7);
+                    Ui::display.print(PSTR2("Max: "));
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 5,
+                        CHAR_HEIGHT * 5 + 7);
+                    Ui::display.print(EepromSettings.rssiDMax);
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 10,
+                        CHAR_HEIGHT * 5 + 7);
+                    Ui::display.print(EepromSettings.rssiEMax);
+
+                    Ui::display.setCursor((CHAR_WIDTH + 1) * 15,
+                        CHAR_HEIGHT * 5 + 7);
+                    Ui::display.print(EepromSettings.rssiFMax);
+                #endif
             #endif
 
             Ui::display.setCursor(0, SCREEN_HEIGHT - CHAR_HEIGHT - 1);

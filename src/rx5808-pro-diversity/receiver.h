@@ -7,7 +7,7 @@
 
 
 #define RECEIVER_LAST_DELAY 50
-#define RECEIVER_LAST_DATA_SIZE 4
+#define RECEIVER_LAST_DATA_SIZE 8
 
 
 namespace Receiver {
