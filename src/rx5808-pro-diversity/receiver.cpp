@@ -263,7 +263,6 @@ namespace Receiver {
         switchDiversity();
     }
 
-    // TODO: ADAPT for six receivers
     void switchDiversity() {
         ReceiverId nextReceiver = activeReceiver;
 

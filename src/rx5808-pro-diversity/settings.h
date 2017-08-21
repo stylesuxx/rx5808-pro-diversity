@@ -38,6 +38,7 @@ SOFTWARE.
 // SSH1106 needs https://github.com/badzz/Adafruit_SH1106 installed.
 //#define SH1106
 
+// NOTE: TVOUT_SCREENS will not work when using 6x diversity
 //#define TVOUT_SCREENS
 #define OLED_128x64_ADAFRUIT_SCREENS
 
@@ -119,26 +120,19 @@ SOFTWARE.
 // Buttons (optional, for comfort)
 #define PIN_BUTTON_DOWN 4
 
-// NOTE: If using 6x diversity, there will not be a button left for saving.
-//       Only use on Arduino MEGA platform, where you have more than 14 digital
-//       pins available
+// NOTE: The save button does not seem to trigger any functionality
 //#define USE_SAVE_BUTTON
-//#define PIN_BUTTON_SAVE 14
+//#define PIN_BUTTON_SAVE 8
 
 #define PIN_LED 13
 
-// NOTE: If using 6x diversity, there will not be a button left for the buzzer.
-//       Only use on Arduino MEGA platform, where you have more than 14 digital
-//       pins available.
-//#define USE_BUZZER
-//#define PIN_BUZZER 15 // Must be an active buzzer, not passive.
+#define USE_BUZZER
+#define PIN_BUZZER 9 // Must be an active buzzer, not passive.
 
 #define PIN_SPI_DATA 10
 #define PIN_SPI_SLAVE_SELECT 11
 #define PIN_SPI_CLOCK 12
 
-// TODO: Add 4 more receivers, the LED pins will be ditched, switching via 3
-//       lines - 8 states
 #define SWITCH_PINS 0b11111100
 #define PIN_SWITCH_0 7
 
